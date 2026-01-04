@@ -1,0 +1,38 @@
+<!-- Import du fichier base.hmtl qui sert de base à toutes les pa %}ges -->
+{%- extends 'base.html' -%}
+
+<!-- Ajout du code suivant dans {block head} {endblock} dans base.html -->
+{%- block head -%}
+
+{%- endblock -%}
+
+<!-- Ajout du code suivant dans {block content} {endblock} dans base.html -->
+{%- block content -%}
+    <section class="hero">
+        <div class="container">
+            <h2>Sacs à main faits main avec Amour</h2>
+            <p>Découvrez notre collection unique d'accessoires artisanaux, confectionnés à la main avec des matériaux de qualité.</p>
+            <a href="#" class="btn">Découvrir la boutique</a>
+        </div>
+    </section>
+
+    <section class="products">
+        <div class="container">
+            <h2>Nos créations phares</h2>
+            <div class="grid">
+                {%- for objet in listeObjetsPremierePage -%}
+                    <div class="product-card">
+                        <img src="{{- objet['fichier'] -}}" alt="{{- objet['nom'] -}}">
+                        <h3>{{- objet['nom'] -}}</h3>
+                        <p>{{- '%0.2f'|format(objet['prix']|float) -}} €</p>
+                        <a href="{{- url_for( 'objet_blueprint.objet', id = objet['id'] ) -}}" class="btn">Voir le détail</a>
+                    </div>
+                {%- endfor -%}
+            </div>
+        </div>
+    </section>
+{%- endblock -%}
+
+
+
+

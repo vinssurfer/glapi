@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<!-- Icon de l'application -->
+	<link rel="icon" type="image/x-icon" href="/static/images/favicon.png">
+	
+	<!-- CSS de l'application dans le dossier static/css -->
+	<link rel="stylesheet" href="/static/css/style.css">
+	
+	{% block head %} {% endblock %}
+	<title>Glapi - Artisanat Unique</title>
+  </head>
+  <body>
+      <header>
+        <div class="container">
+            <h1>Glapi</h1>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for( "index_blueprint.index" ) }}">Accueil</a></li>
+                    <li><a href="#">Boutique</a></li>
+                    <li><a href="#">À propos</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        {% block content %} {% endblock %}
+    </div>
+	
+	<footer>
+        <div class="container">
+            <p>&copy; 2026 Glapi. Tous droits réservés.</p>
+        </div>
+    </footer>
+</body>
+</html>
