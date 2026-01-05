@@ -10,6 +10,7 @@
 	
 	<!-- CSS de l'application dans le dossier static/css -->
 	<link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/tableau.css">
 	
 	{% block head %} {% endblock %}
 	<title>Glapi - Artisanat Unique</title>
@@ -24,6 +25,7 @@
                     <li><a href="#">Boutique</a></li>
                     <li><a href="#">À propos</a></li>
                     <li><a href="#">Contact</a></li>
+                    <li><a href="{{ url_for( "liste_objets_blueprint.liste_objets" ) }}">Gestion site</a></li>
                 </ul>
             </nav>
         </div>

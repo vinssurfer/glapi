@@ -1,0 +1,247 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f9f5f0;
+    padding-top: 100px; /* Espace pour éviter le chevauchement avec un éventuel header fixe */
+}
+
+/* Conteneur principal centré */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Section des filtres */
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.filters input[type="text"],
+.filters select {
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    min-width: 200px;
+    transition: border-color 0.3s;
+}
+
+.filters input[type="text"]:focus,
+.filters select:focus {
+    outline: none;
+    border-color: #8b6f47;
+    box-shadow: 0 0 0 3px rgba(139, 111, 71, 0.2);
+}
+
+/* Style des inputs/selects dans la ligne de filtres */
+.filter-row input[type="text"],
+.filter-row select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #fff;
+    transition: border-color 0.3s;
+}
+
+.filter-row input[type="text"]:focus,
+.filter-row select:focus {
+    outline: none;
+    border-color: #8b6f47;
+    box-shadow: 0 0 0 3px rgba(139, 111, 71, 0.2);
+}
+
+/* Fond légèrement différent pour distinguer la ligne de filtres */
+.filter-row th {
+    background-color: #f5f0e8;
+    padding: 10px 12px;
+}
+
+/* Ajustement pour les colonnes sans filtre (image et actions) */
+.filter-row th:empty {
+    background-color: transparent;
+    padding: 0;
+}
+
+.actions {
+    text-align: center;
+}
+
+/* Tableau */
+#objectsTable {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+#objectsTable th {
+    background-color: #8b6f47;
+    color: #ffffff;
+    padding: 5px 12px;
+    text-align: left;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s;
+}
+
+#objectsTable th:hover {
+    background-color: #7a5f3a;
+}
+
+#objectsTable td {
+    padding: 14px 12px;
+    border-bottom: 1px solid #eee;
+}
+
+#objectsTable tr:last-child td {
+    border-bottom: none;
+}
+
+#objectsTable tr:hover {
+    background-color: #f5f0e8;
+    transition: background-color 0.3s;
+}
+
+#objectsTable thead tr:first-child th {
+    text-align: center;
+}
+
+/* Images dans le tableau */
+#objectsTable img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+/* Style unifié pour tous les boutons d'action et le bouton reset */
+#objectsTable button,
+#reset-filters-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    min-width: 100px; /* Optionnel : largeur minimale pour uniformité */
+}
+
+/* Bouton Modifier */
+#objectsTable button[modifier],
+#objectsTable button[modifier] {
+    background-color: #478b50;
+    color: #ffffff;
+}
+
+#objectsTable button[modifier]:hover {
+    background-color: #3a7a3e;
+}
+
+/* Bouton Supprimer */
+#objectsTable button[supprimer] {
+    background-color: #d9534f;
+    color: #ffffff;
+}
+
+#objectsTable button[supprimer]:hover {
+    background-color: #c9302c;
+}
+
+/* Bouton Réinitialiser filtres (dans l'en-tête) */
+#reset-filters-btn {
+    background-color: #6c757d;  /* Gris neutre pour différencier de l'action destructive */
+    color: #ffffff;
+    width: 100%;
+    padding: 10px; /* Légèrement plus haut pour alignement visuel dans la cellule */
+}
+
+#reset-filters-btn:hover {
+    background-color: #5a6268;
+}
+
+/* Centrage des boutons dans la colonne Actions */
+.actions {
+    text-align: center;
+    padding: 10px 0;
+}
+
+/* filtres des prix */
+.price-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 6px; /* Espacement entre les deux inputs */
+}
+
+.price-filters input[type="number"] {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #fff;
+    transition: border-color 0.3s;
+}
+
+.price-filters input[type="number"]:focus {
+    outline: none;
+    border-color: #8b6f47;
+    box-shadow: 0 0 0 3px rgba(139, 111, 71, 0.2);
+}
+
+/* Supprimer les flèches par défaut des inputs number pour un look plus épuré (optionnel) */
+.price-filters input[type="number"]::-webkit-inner-spin-button,
+.price-filters input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.price-filters input[type="number"] {
+    -moz-appearance: textfield; /* Firefox */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filters input[type="text"],
+    .filters select {
+        min-width: auto;
+    }
+    
+    #objectsTable {
+        font-size: 14px;
+    }
+    
+    #objectsTable th,
+    #objectsTable td {
+        padding: 10px 8px;
+    }
+    
+    #objectsTable img {
+        width: 50px;
+        height: 50px;
+    }
+}

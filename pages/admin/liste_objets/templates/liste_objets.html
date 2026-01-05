@@ -1,0 +1,242 @@
+<!-- Import du fichier base.hmtl qui sert de base à toutes les pa %}ges -->
+{%- extends 'base.html' -%}
+
+<!-- Ajout du code suivant dans {block head} {endblock} dans base.html -->
+{%- block head -%}
+
+{%- endblock -%}
+
+<!-- Ajout du code suivant dans {block content} {endblock} dans base.html -->
+{%- block content -%}
+<h1>Tableau des objets</h1>
+
+<table id="objectsTable">
+    <thead>
+        <tr>
+            <th onclick="sortTable(0)">ID</th>
+            <th>Image</th>
+            <th onclick="sortTable(2)">Nom</th>
+            <th onclick="sortTable(3)">Prix</th>
+            <th onclick="sortTable(4)">Catégorie</th>
+            <th onclick="sortTable(5)">Sous-catégorie</th>
+            <th>Actions</th>
+        </tr>
+        <tr class="filter-row">
+                <th></th> <!-- Pas de filtre id -->
+                <th></th> <!-- Pas de filtre image -->
+                <th><input type="text" id="filterName" placeholder="Filtre par nom" onkeyup="filterTable()"></th>
+                <th>
+                    <div class="price-filters">
+                        <input type="number" id="filterPriceMin" placeholder="Prix min" step="0.01" min="0" oninput="filterTable()">
+                        <input type="number" id="filterPriceMax" placeholder="Prix max" step="0.01" min="0" oninput="filterTable()">
+                    </div>
+                </th>
+                <th>
+                    <select id="filterCategory" onchange="updateSubCategories(); filterTable()">
+                        <option value="">Toutes</option>
+                    </select>
+                </th>
+                <th>
+                    <select id="filterSubCategory" onchange="filterTable()">
+                        <option value="">Toutes</option>
+                    </select>
+                </th>
+                <th><button id="reset-filters-btn" class="btn">Réinitialiser filtres</button></th>
+            </tr>
+    </thead>
+    <tbody>
+        {%- for objet in liste_objets -%}
+            <tr>
+                <td>{{- objet['id'] -}}</td>
+                <td><img src="{{- objet['fichier2D'] -}}" width="50"></td>
+                <td>{{- objet['nom'] -}}</td>
+                <td>{{- '%0.2f'|format(objet['prix']|float) -}} €</td>
+                <td>{{- objet['categorie'] -}}</td>
+                <td>{{- objet['sous_categorie'] -}}</td>
+                <td>
+                    <button modifier>Modifier</button>
+                    <button supprimer>Supprimer</button>
+                </td>
+            </tr>
+        {%- endfor -%}
+    </tbody>
+</table>
+
+<script>  
+    // Initialisation au chargement complet du DOM
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeFilters();
+        sortState = { column: -1, direction: 'asc' };
+
+        // Bouton reset des filtres
+        const resetBtn = document.getElementById('reset-filters-btn');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', resetFilters);
+        }
+    });
+
+    // ---------------------------- FILTRES ----------------------------
+    // Objet pour stocker les associations catégorie → sous-catégories
+    const categoryToSubCategories = {};
+
+    // Fonction pour initialiser les filtres suivant les données du tableau
+    function initializeFilters() {
+        const categorySelect = document.getElementById("filterCategory");
+        if (!categorySelect) return;
+
+        const table = document.getElementById("objectsTable");
+        const rows = table.querySelectorAll("tbody tr"); // Cibler uniquement les lignes de données
+        const categories = new Set();
+
+        rows.forEach(row => {
+            const cells = row.getElementsByTagName("td");
+            if (cells.length < 6) return;
+            const category = cells[4].textContent.trim();
+            const subCategory = cells[5].textContent.trim();
+
+            categories.add(category);
+
+            if (!categoryToSubCategories[category]) {
+                categoryToSubCategories[category] = new Set();
+            }
+            categoryToSubCategories[category].add(subCategory);
+        });
+
+        // Vider et remplir les catégories
+        categorySelect.innerHTML = '<option value="">Toutes</option>';
+        [...categories].sort().forEach(cat => {
+            const option = document.createElement("option");
+            option.value = cat;
+            option.textContent = cat;
+            categorySelect.appendChild(option);
+        });
+
+        updateSubCategories();
+    }
+
+    // Mettre à jour la liste des sous-catégories selon la catégorie choisie
+    function updateSubCategories() {
+        const categorySelect = document.getElementById("filterCategory");
+        const subCategorySelect = document.getElementById("filterSubCategory");
+        const selectedCategory = categorySelect.value;
+
+        subCategorySelect.innerHTML = '<option value="">Toutes</option>';
+
+        if (selectedCategory && categoryToSubCategories[selectedCategory]) {
+            [...categoryToSubCategories[selectedCategory]].sort().forEach(sub => {
+                const option = document.createElement("option");
+                option.value = sub;
+                option.textContent = sub;
+                subCategorySelect.appendChild(option);
+            });
+        }
+    }
+
+    // Fonction de filtrage adaptée
+    function filterTable() {
+        const nameFilter = (document.getElementById("filterName")?.value || "").toUpperCase();
+        const priceMin = parseFloat(document.getElementById("filterPriceMin")?.value) || 0;
+        const priceMax = parseFloat(document.getElementById("filterPriceMax")?.value) || Infinity;
+        const selectedCategory = (document.getElementById("filterCategory")?.value || "").toUpperCase();
+        const selectedSubCategory = (document.getElementById("filterSubCategory")?.value || "").toUpperCase();
+
+        const table = document.getElementById("objectsTable");
+        const rows = table.querySelectorAll("tbody tr");
+
+        rows.forEach(row => {
+            const cells = row.getElementsByTagName("td");
+            const name = cells[2].textContent.toUpperCase();
+            const priceText = cells[3].textContent.trim();
+            const price = parseFloat(priceText.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0;
+            const category = cells[4].textContent.toUpperCase();
+            const subCategory = cells[5].textContent.toUpperCase();
+
+            const matchesName = name.includes(nameFilter);
+            const matchesPrice = price >= priceMin && price <= priceMax;
+            const matchesCategory = !selectedCategory || category === selectedCategory;
+            const matchesSubCategory = !selectedSubCategory || subCategory === selectedSubCategory;
+
+            row.style.display = matchesName && matchesPrice && matchesCategory && matchesSubCategory ? "" : "none";
+        });
+    }
+
+    function resetFilters() {
+        // Vider les champs texte
+        document.getElementById("filterName").value = "";
+        document.getElementById("filterPriceMin").value = "";
+        document.getElementById("filterPriceMax").value = "";
+        if (document.getElementById("filterId")) {
+            document.getElementById("filterId").value = "";
+        }
+
+        // Réinitialiser les selects
+        document.getElementById("filterCategory").value = "";
+        updateSubCategories();  // Remet les sous-catégories à "Toutes"
+
+        // Réafficher toutes les lignes
+        filterTable();
+    }
+
+    // ---------------------------- TRIE DES COLONNES ----------------------------
+    // Objet pour gérer l'état de tri (colonne et direction)
+    let sortState = {
+        column: -1,
+        direction: 'asc'
+    };
+
+    function sortTable(n) {
+        const table = document.getElementById("objectsTable");
+        const tbody = table.tBodies[0]; // Cibler uniquement le tbody
+        const rows = Array.from(tbody.rows); // Convertir en tableau pour tri stable
+        
+        if (rows.length <= 1) return; // Pas de tri si une seule ligne
+
+        // Déterminer la direction de tri
+        let dir = 'asc';
+        if (sortState.column === n) {
+            dir = sortState.direction === 'asc' ? 'desc' : 'asc';
+        }
+        sortState = { column: n, direction: dir };
+
+        // Fonction de comparaison selon la colonne
+        const multiplier = dir === 'asc' ? 1 : -1;
+        
+        rows.sort((a, b) => {
+            let aVal = a.cells[n].textContent.trim();
+            let bVal = b.cells[n].textContent.trim();
+
+            // Gestion spéciale pour la colonne prix (index 3)
+            if (n === 3) { // Prix
+                const numA = parseFloat(aVal) || 0;
+                const numB = parseFloat(bVal) || 0;
+                return multiplier * (numA - numB);
+            }
+
+            // Tri texte insensible à la casse pour les autres colonnes
+            return multiplier * aVal.localeCompare(bVal, undefined, { 
+                numeric: true, 
+                sensitivity: 'base' 
+            });
+        });
+
+        // Réinsérer les lignes triées dans le tbody
+        rows.forEach(row => tbody.appendChild(row));
+
+        // Optionnel : Ajouter des indicateurs visuels sur les en-têtes
+        updateSortIndicators(n, dir);
+    }
+
+    // Fonction pour mettre à jour les indicateurs visuels de tri
+    function updateSortIndicators(activeColumn, direction) {
+        const headers = document.querySelectorAll("#objectsTable th");
+        headers.forEach((th, index) => {
+            th.innerHTML = th.innerHTML.replace(/ ▲| ▼/g, ''); // Supprimer anciens indicateurs
+            
+            if (index === activeColumn) {
+                th.innerHTML += direction === 'asc' ? ' ▲' : ' ▼';
+            }
+        });
+    }
+
+</script>
+{%- endblock -%}

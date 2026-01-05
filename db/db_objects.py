@@ -64,6 +64,10 @@ class db_objects():
         sql = """SELECT o.id as id,
                         o.nom as nom,
                         o.prix as prix,
+                        o.id_categories as id_categories,
+                        o.id_sous_categories as id_sous_categories,
+                        o.description as description,
+                        o.premiere_page as premiere_page,
                         c.nom as categorie,
                         sc.nom as sous_categorie
                 FROM objets as o
@@ -87,6 +91,10 @@ class db_objects():
                 'id': line['id'],
                 'nom': line['nom'],
                 'prix': line['prix'],
+                'id_categories': line['id_categories'],
+                'id_sous_categories': line['id_sous_categories'],
+                'description': line['description'],
+                'premiere_page': line['premiere_page'],
                 'categorie': line['categorie'],
                 'sous_categorie': line['sous_categorie']
             })
@@ -139,3 +147,50 @@ class db_objects():
             chemin = config.img_3D_Path(req[0]['fichier'])
 
         return chemin
+    
+    def get_liste_objets(self):     
+        """
+        Retourne la liste des objets avec la première image 2D
+        """
+        conn = self.__get_db_connection()       
+        sql = """SELECT o.id as id,
+                        o.nom as nom,
+                        o.prix as prix,
+                        o.id_categories as id_categories,
+                        o.id_sous_categories as id_sous_categories,
+                        o.description as description,
+                        o.premiere_page as premiere_page,
+                        c.nom as categorie,
+                        sc.nom as sous_categorie,
+                        (SELECT i.fichier
+                         FROM images as i
+                         WHERE i.id_objets = o.id AND i.image3D=0 LIMIT 1) as fichier2D
+                FROM objets as o
+
+                INNER JOIN categories as c
+                ON c.id= o.id_categories
+
+                INNER JOIN sous_categories as sc
+                ON sc.id= o.id_sous_categories
+        """
+
+        req = conn.execute(sql).fetchall()
+        conn.close()
+
+        # Conversion du résultat de la requête en liste
+        list = []
+        for line in req:
+            list.append({
+                'id': line['id'],
+                'nom': line['nom'],
+                'prix': line['prix'],
+                'id_categories': line['id_categories'],
+                'id_sous_categories': line['id_sous_categories'],
+                'description': line['description'],
+                'premiere_page': line['premiere_page'],
+                'categorie': line['categorie'],
+                'sous_categorie': line['sous_categorie'],
+                'fichier2D': config.img_2D_Path(line['fichier2D'])
+            })
+
+        return list

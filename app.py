@@ -19,6 +19,7 @@ config.check_dbs_log_file() # Contrôle des bases de données et fichier log
 # Déclaration des pages
 from pages.index.index import index_blueprint
 from pages.objet.objet import objet_blueprint
+from pages.admin.liste_objets.liste_objets import liste_objets_blueprint
 
 # Lancement de l'application    
 app = Flask(__name__)
@@ -30,6 +31,8 @@ app.jinja_env.lstrip_blocks = True # Suppression des espace et tab avec les bloc
 # Ajout des pages dans l'app
 app.register_blueprint(index_blueprint)
 app.register_blueprint(objet_blueprint)
+app.register_blueprint(liste_objets_blueprint)
+
 """
 # Configuration des dossiers
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))

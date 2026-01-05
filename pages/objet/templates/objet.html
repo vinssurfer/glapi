@@ -185,16 +185,7 @@
             <h1>{{- objet['nom'] -}}</h1>
             <div class="price">{{- '%0.2f'|format(objet['prix']|float) -}} €</div>
             <div class="description">
-                <p>Sac à main en cuir véritable tanné végétal, entièrement confectionné à la main dans notre atelier.</p>
-                <p>Caractéristiques :</p>
-                <ul>
-                    <li>Cuir italien de première qualité</li>
-                    <li>Doublure en coton naturel</li>
-                    <li>Fermeture par bouton pression magnétique</li>
-                    <li>Bandoulière amovible et réglable</li>
-                    <li>Dimensions : 32 × 25 × 12 cm</li>
-                </ul>
-                <p>Chaque pièce est unique. Les variations naturelles du cuir font partie de son charme artisanal.</p>
+                {{- objet['description']|safe -}}
             </div>
             <a href="#" class="btn">Ajouter au panier</a>
         </div>
