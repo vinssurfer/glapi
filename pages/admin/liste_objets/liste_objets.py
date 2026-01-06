@@ -15,11 +15,25 @@ liste_objets_blueprint = Blueprint( name='liste_objets_blueprint',
 db = db_objects()
 
 # Page liste des objets
-@liste_objets_blueprint.route('/liste_objets')
+@liste_objets_blueprint.route('/liste_objets', methods=('GET', 'POST'))
 def liste_objets():
     """
         Page listant les objets
     """
+    return render_template( 'liste_objets.html',
+                            liste_objets = db.get_liste_objets()
+                        )
+
+# Suppression objet
+@liste_objets_blueprint.route('/supprimer_objet', methods=('GET', 'POST'))
+def supprimer_objet():
+    """
+        Suppression d'un objet
+    """
+    if 'id' in request.args:
+        db.delete_objet(request.args['id'])
+
+    # Affiche la nouvelle liste   
     return render_template( 'liste_objets.html',
                             liste_objets = db.get_liste_objets()
                         )

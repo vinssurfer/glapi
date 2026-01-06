@@ -13,13 +13,13 @@
 <table id="objectsTable">
     <thead>
         <tr>
-            <th onclick="sortTable(0)">ID</th>
-            <th>Image</th>
-            <th onclick="sortTable(2)">Nom</th>
-            <th onclick="sortTable(3)">Prix</th>
-            <th onclick="sortTable(4)">Catégorie</th>
-            <th onclick="sortTable(5)">Sous-catégorie</th>
-            <th>Actions</th>
+            <th style="width: 8%;" onclick="sortTable(0)">ID</th>
+            <th style="width: 10%;">Image</th>
+            <th style="width: 25%;" onclick="sortTable(2)">Nom</th>
+            <th style="width: 12%;" onclick="sortTable(3)">Prix</th>
+            <th style="width: 15%;" onclick="sortTable(4)">Catégorie</th>
+            <th style="width: 20%;" onclick="sortTable(5)">Sous-catégorie</th>
+            <th style="width: 10%;">Actions</th>
         </tr>
         <tr class="filter-row">
                 <th></th> <!-- Pas de filtre id -->
@@ -47,21 +47,44 @@
     <tbody>
         {%- for objet in liste_objets -%}
             <tr>
-                <td>{{- objet['id'] -}}</td>
-                <td><img src="{{- objet['fichier2D'] -}}" width="50"></td>
-                <td>{{- objet['nom'] -}}</td>
-                <td>{{- '%0.2f'|format(objet['prix']|float) -}} €</td>
-                <td>{{- objet['categorie'] -}}</td>
-                <td>{{- objet['sous_categorie'] -}}</td>
-                <td>
-                    <button modifier>Modifier</button>
-                    <button supprimer>Supprimer</button>
+                <td style="width: 8%; text-align: center;">{{- objet['id'] -}}</td>
+                <td style="width: 10%;"><img src="{{- objet['fichier2D'] -}}" width="50"></td>
+                <td style="width: 25%;">{{- objet['nom'] -}}</td>
+                <td style="width: 12%; text-align: center;">{{- '%0.2f'|format(objet['prix']|float) -}} €</td>
+                <td style="width: 15%; text-align: center;">{{- objet['categorie'] -}}</td>
+                <td style="width: 20%; text-align: center;">{{- objet['sous_categorie'] -}}</td>
+                <td style="width: 10%;">
+                    <button class="btn-modifier">Modifier</button>
+                    <button class="btn-supprimer" data-id="{{ objet['id'] }}">Supprimer</button>
                 </td>
             </tr>
         {%- endfor -%}
     </tbody>
 </table>
 
+<!-- ---------------------------- BOUTONS SUPPRIMER ---------------------------->
+<script>
+    // Gestion de la suppression avec confirmation
+    document.querySelectorAll('.btn-supprimer').forEach(button => {
+        button.addEventListener('click', function() {
+            const objetId = this.getAttribute('data-id');
+            const objetNom = this.closest('tr').querySelector('td:nth-child(3)').textContent.trim();
+
+            // Message de confirmation plus explicite avec le nom de l'objet
+            const confirmation = confirm(
+                `Êtes-vous sûr de vouloir supprimer l'objet "${objetNom}" (ID: ${objetId}) ?` + 
+                `\nCette action est irréversible.`
+            );
+
+            if (confirmation) {
+                // Redirection vers la route de suppression (à adapter selon votre application Flask)
+                window.location.href = `/supprimer_objet?id=${objetId}`;
+            }
+        });
+    });
+</script>
+
+<!-- ---------------------------- FILTRE DES COLONNES ---------------------------->
 <script>  
     // Initialisation au chargement complet du DOM
     document.addEventListener('DOMContentLoaded', function() {
@@ -75,7 +98,6 @@
         }
     });
 
-    // ---------------------------- FILTRES ----------------------------
     // Objet pour stocker les associations catégorie → sous-catégories
     const categoryToSubCategories = {};
 
@@ -176,8 +198,10 @@
         // Réafficher toutes les lignes
         filterTable();
     }
+</script>
 
-    // ---------------------------- TRIE DES COLONNES ----------------------------
+<!-- ---------------------------- TRIE DES COLONNES ---------------------------->
+<script>
     // Objet pour gérer l'état de tri (colonne et direction)
     let sortState = {
         column: -1,
@@ -237,6 +261,5 @@
             }
         });
     }
-
 </script>
 {%- endblock -%}

@@ -194,3 +194,16 @@ class db_objects():
             })
 
         return list
+    
+    def delete_objet(self, id : int):
+        """
+        Suppression d'un objet
+        
+        :param id: id de l'objet à supprimer
+        :type id: int
+        """
+        conn = self.__get_db_connection() 
+        conn.execute(f'DELETE FROM objets WHERE id = {id}')
+        conn.execute(f'DELETE FROM images WHERE id_objets = {id}')
+        conn.commit()
+        conn.close()

@@ -4,6 +4,7 @@
     box-sizing: border-box;
 }
 
+
 body {
     font-family: 'Arial', sans-serif;
     line-height: 1.6;
@@ -19,8 +20,10 @@ body {
     padding: 0 20px;
 }
 
-/* Section des filtres */
-.filters {
+/* --------------------------------------------------
+ Section des filtres
+-------------------------------------------------- */
+ .filters {
     display: flex;
     flex-wrap: wrap;
     gap: 15px;
@@ -80,11 +83,54 @@ body {
     padding: 0;
 }
 
-.actions {
-    text-align: center;
+/* filtres des prix */
+.price-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 6px; /* Espacement entre les deux inputs */
 }
 
-/* Tableau */
+.price-filters input[type="number"] {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #fff;
+    transition: border-color 0.3s;
+}
+
+.price-filters input[type="number"]:focus {
+    outline: none;
+    border-color: #8b6f47;
+    box-shadow: 0 0 0 3px rgba(139, 111, 71, 0.2);
+}
+
+/* Supprimer les flèches par défaut des inputs number pour un look plus épuré (optionnel) */
+.price-filters input[type="number"]::-webkit-inner-spin-button,
+.price-filters input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.price-filters input[type="number"] {
+    -moz-appearance: textfield; /* Firefox */
+}
+
+/* Bouton Réinitialiser filtres (dans l'en-tête) */
+#reset-filters-btn {
+    background-color: #6c757d;  /* Gris neutre pour différencier de l'action destructive */
+    color: #ffffff;
+    width: 100%;
+    padding: 10px; /* Légèrement plus haut pour alignement visuel dans la cellule */
+}
+
+#reset-filters-btn:hover {
+    background-color: #5a6268;
+}
+
+/* --------------------------------------------------
+ Section du tableau
+-------------------------------------------------- */
 #objectsTable {
     width: 100%;
     border-collapse: collapse;
@@ -148,36 +194,67 @@ body {
 }
 
 /* Bouton Modifier */
-#objectsTable button[modifier],
-#objectsTable button[modifier] {
+.btn-modifier {
     background-color: #478b50;
     color: #ffffff;
 }
 
-#objectsTable button[modifier]:hover {
+.btn-modifier:hover {
     background-color: #3a7a3e;
 }
 
 /* Bouton Supprimer */
-#objectsTable button[supprimer] {
+.btn-supprimer {
     background-color: #d9534f;
     color: #ffffff;
 }
 
-#objectsTable button[supprimer]:hover {
+.btn-supprimer:hover {
     background-color: #c9302c;
 }
 
-/* Bouton Réinitialiser filtres (dans l'en-tête) */
-#reset-filters-btn {
-    background-color: #6c757d;  /* Gris neutre pour différencier de l'action destructive */
-    color: #ffffff;
-    width: 100%;
-    padding: 10px; /* Légèrement plus haut pour alignement visuel dans la cellule */
+/* En-têtes de tableau fixes (les 2 lignes du thead) */
+#objectsTable thead {
+    position: sticky;
+    top: 0;
+    background-color: #ffffff; /* Assure un fond opaque */
+    z-index: 10; /* Place les en-têtes au-dessus du contenu défilant */
 }
 
-#reset-filters-btn:hover {
-    background-color: #5a6268;
+#objectsTable thead tr:first-child th {
+    position: sticky;
+    top: 0;
+    background-color: #8b6f47; /* Couleur d'origine des en-têtes principaux */
+    z-index: 11; /* Légèrement au-dessus de la ligne de filtres */
+}
+
+#objectsTable thead tr.filter-row th {
+    position: sticky;
+    top: 46px; /* Hauteur approximative de la première ligne d'en-tête ; ajustez si nécessaire */
+    background-color: #a28a69; /* Couleur de fond de la ligne de filtres */
+    z-index: 11;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+/* Optionnel : ombre subtile pour séparer visuellement les en-têtes fixes du contenu */
+#objectsTable thead tr.filter-row {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Assurer que le tableau a une hauteur définie ou un conteneur défilable si nécessaire */
+#objectsTable {
+    display: block; /* Permet le défilement interne si le tableau est très long */
+    max-height: 80vh; /* Optionnel : limite la hauteur du tableau pour forcer le défilement */
+    overflow-y: auto;
+}
+
+/* Rétablir le comportement de bloc pour thead et tbody */
+#objectsTable thead,
+#objectsTable tbody {
+    display: table;
+    width: 100%;
+    table-layout: fixed; /* Optionnel : pour un alignement parfait des colonnes */
 }
 
 /* Centrage des boutons dans la colonne Actions */
@@ -186,38 +263,7 @@ body {
     padding: 10px 0;
 }
 
-/* filtres des prix */
-.price-filters {
-    display: flex;
-    flex-direction: column;
-    gap: 6px; /* Espacement entre les deux inputs */
-}
 
-.price-filters input[type="number"] {
-    width: 100%;
-    padding: 6px 8px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 14px;
-    background-color: #fff;
-    transition: border-color 0.3s;
-}
-
-.price-filters input[type="number"]:focus {
-    outline: none;
-    border-color: #8b6f47;
-    box-shadow: 0 0 0 3px rgba(139, 111, 71, 0.2);
-}
-
-/* Supprimer les flèches par défaut des inputs number pour un look plus épuré (optionnel) */
-.price-filters input[type="number"]::-webkit-inner-spin-button,
-.price-filters input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-.price-filters input[type="number"] {
-    -moz-appearance: textfield; /* Firefox */
-}
 
 /* Responsive */
 @media (max-width: 768px) {
