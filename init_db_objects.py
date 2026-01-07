@@ -44,6 +44,7 @@ try:
     id_sous_categories INTEGER,
     description TEXT,
     premiere_page INTEGER,
+    actif INTEGER,
     UNIQUE(id)
     );""").fetchall() 
 except:

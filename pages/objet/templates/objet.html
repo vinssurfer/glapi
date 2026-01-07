@@ -152,18 +152,18 @@
                 <img src="{{- images2D[0]['fichier'] -}}" id="mainImg">
             </div>
             <div class="thumbnails">
-                {%- for image in images2D -%}
+                {%- for image2D in images2D -%}
                     {% if loop.first %}
-                        <img src="{{- image['fichier'] -}}" class="thumbnail active" onclick="changeImage(this)">
+                        <img src="{{- image2D['fichier'] -}}" class="thumbnail active" onclick="changeImage(this)">
                     {% else %}
-                        <img src="{{- image['fichier'] -}}" class="thumbnail" onclick="changeImage(this)">
+                        <img src="{{- image2D['fichier'] -}}" class="thumbnail" onclick="changeImage(this)">
                     {% endif %}
                 {%- endfor -%}
 
-                {% if image3D %}
-                    <div class="thumbnail" onclick="show3DView()">
+                {%- for image3D in images3D -%}
+                    <div class="thumbnail" onclick="show3DView('{{- image3D['fichier'] -}}')">
                         <model-viewer 
-                            src="{{- image3D -}}" 
+                            src="{{- image3D['fichier'] -}}"
                             alt="Vue 3D" 
                             poster="{{- images2D[0]['fichier'] -}}" 
                             loading="lazy" 
@@ -176,7 +176,7 @@
                             </div>
                         </model-viewer>
                     </div>
-                {% endif %}
+                {%- endfor -%}
             </div>
         </div>
 
@@ -199,11 +199,11 @@
             thumb.classList.add('active');
         }
 
-        function show3DView() {
+        function show3DView(modelSrc) {
             const mainView = document.getElementById('mainView');
             mainView.innerHTML = `
                 <model-viewer 
-                    src="{{- image3D -}}"
+                    src="${modelSrc}"
                     auto-rotate
                     camera-controls
                     shadow-intensity="1"

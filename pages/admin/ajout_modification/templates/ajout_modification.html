@@ -1,0 +1,93 @@
+<!-- Import du fichier base.hmtl qui sert de base à toutes les pa %}ges -->
+{%- extends 'base.html' -%}
+
+<!-- Ajout du code suivant dans {block head} {endblock} dans base.html -->
+{%- block head -%}
+
+{%- endblock -%}
+
+<!-- Ajout du code suivant dans {block content} {endblock} dans base.html -->
+{%- block content -%}
+<section class="admin-form-section">
+    <div class="container">
+        <div class="form-container">  
+            <h2>
+                {% if produit.id is defined %}
+                    Modifier le produit
+                {% else %}
+                    Ajouter un nouveau produit
+                {% endif %}
+            </h2>
+
+            <form method="POST" action="{{ url_for('ajouter_produit') }}">
+                {{ form.hidden_tag() }} <!-- Protection CSRF si Flask-WTF est utilisé -->
+
+                <!-- Si édition, ajouter un champ caché pour l'ID -->
+                {% if produit.id is defined %}
+                    <input type="hidden" name="id" value="{{ produit.id }}">
+                {% endif %}
+
+                <label for="nom">Nom du produit</label>
+                {{ form.nom(class="") }}
+
+                <label for="prix">Prix (en €, supérieur à 0)</label>
+                {{ form.prix(type="number", min="0.01", step="0.01") }}
+
+                <label for="categorie">Catégorie</label>
+                {{ form.categorie }}
+
+                <label for="sous_categorie">Sous-catégorie</label>
+                {{ form.sous_categorie }}
+
+                <label for="description">Description</label>
+                {{ form.description }}
+
+                <div class="checkbox-group">
+                    {{ form.premiere_page }}
+                    <label for="premiere_page">Afficher en première page</label>
+                </div>
+
+                <div class="checkbox-group">
+                    {{ form.active }}
+                    <label for="active">Produit actif (visible)</label>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn">
+                        {% if produit.id is defined %}
+                            Enregistrer les modifications
+                        {% else %}
+                            Ajouter le produit
+                        {% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Script JavaScript pour rendre la sous-catégorie dépendante dynamiquement (sans rechargement) -->
+<script>
+    const subcategories = {
+        'Bijoux': ['Colliers', 'Bracelets', 'Boucles d\'oreilles', 'Bagues', 'Broches', 'Parures'],
+        'Accessoires': ['Sacs', 'Écharpes', 'Ceintures', 'Chapeaux'],
+        'Décoration': ['Objets décoratifs', 'Bouges artisanales', 'Tableaux', 'Vases'],
+        'Autres': ['Personnalisés', 'Cadeaux']
+    };
+
+    document.getElementById('categorie').addEventListener('change', function() {
+        const cat = this.value;
+        const sousCatSelect = document.getElementById('sous_categorie');
+        sousCatSelect.innerHTML = '<option value="">-- Sélectionner --</option>';
+
+        if (subcategories[cat]) {
+            subcategories[cat].forEach(sub => {
+                const option = document.createElement('option');
+                option.value = sub;
+                option.textContent = sub;
+                sousCatSelect.appendChild(option);
+            });
+        }
+    });
+</script>
+{%- endblock -%}

@@ -36,7 +36,7 @@ class db_objects():
                 INNER JOIN images as i
                 ON i.id_objets = o.id
 
-                WHERE o.premiere_page = 1 AND i.image3D = 0
+                WHERE o.premiere_page = 1 AND o.actif = 1 AND i.image3D = 0
         """
         req = conn.execute(sql).fetchall()
         conn.close()
@@ -55,7 +55,7 @@ class db_objects():
 
     def get_objet(self, id : int):     
         """
-        Retourne les informations d'un objet sauf la liste des images
+        Retourne les informations d'un objet
         
         :param id: id de l'objet
         :type id: int
@@ -68,15 +68,8 @@ class db_objects():
                         o.id_sous_categories as id_sous_categories,
                         o.description as description,
                         o.premiere_page as premiere_page,
-                        c.nom as categorie,
-                        sc.nom as sous_categorie
+                        o.actif as actif
                 FROM objets as o
-
-                INNER JOIN categories as c
-                ON c.id= o.id_categories
-
-                INNER JOIN sous_categories as sc
-                ON sc.id= o.id_sous_categories
 
                 WHERE o.id =
         """ + str(id)
@@ -95,12 +88,59 @@ class db_objects():
                 'id_sous_categories': line['id_sous_categories'],
                 'description': line['description'],
                 'premiere_page': line['premiere_page'],
-                'categorie': line['categorie'],
-                'sous_categorie': line['sous_categorie']
+                'actif': line['actif']
             })
 
         return list[0]
     
+    def get_categories(self):     
+        """
+        Retourne les catégories
+        """
+        conn = self.__get_db_connection()       
+        sql = """SELECT c.id as id,
+                        c.nom as nom
+                FROM categories as c
+        """
+
+        req = conn.execute(sql).fetchall()
+        conn.close()
+
+        # Conversion du résultat de la requête en liste
+        list = []
+        for line in req:
+            list.append({
+                'id': line['id'],
+                'nom': line['nom']
+            })
+
+        return list
+
+    def get_sous_categories(self):     
+        """
+        Retourne les sous_catégories
+        """
+        conn = self.__get_db_connection()       
+        sql = """SELECT sc.id as id,
+                        sc.id_categories as id_categories,
+                        sc.nom as nom
+                FROM sous_categories as sc
+        """
+
+        req = conn.execute(sql).fetchall()
+        conn.close()
+
+        # Conversion du résultat de la requête en liste
+        list = []
+        for line in req:
+            list.append({
+                'id': line['id'],
+                'id_categories': line['id_categories'],
+                'nom': line['nom']
+            })
+
+        return list
+
     def get_images2D_objet(self, id : int):
         """
         Retourne la liste des images 2D d'un objet
@@ -126,9 +166,9 @@ class db_objects():
                 
         return list
     
-    def get_image3D_objet(self, id : int):
+    def get_images3D_objet(self, id : int):
         """
-        Retourne l'image 3D d'un objet
+        Retourne les images 3D d'un objet
         
         :param id: id de l'objet
         :type id: int
@@ -137,16 +177,18 @@ class db_objects():
         sql = """SELECT i.fichier as fichier
                 FROM images as i
 
-                WHERE i.id_objets = """ + str(id) + """ AND image3D = 1 LIMIT 1"""
+                WHERE i.id_objets = """ + str(id) + """ AND image3D = 1"""
 
         req = conn.execute(sql).fetchall()
         conn.close()
    
-        chemin = ""
-        if len(req) >= 1:
-            chemin = config.img_3D_Path(req[0]['fichier'])
-
-        return chemin
+        list = []
+        for line in req:
+            list.append({
+                'fichier': config.img_3D_Path(line['fichier'])
+            })
+                
+        return list
     
     def get_liste_objets(self):     
         """
@@ -160,6 +202,7 @@ class db_objects():
                         o.id_sous_categories as id_sous_categories,
                         o.description as description,
                         o.premiere_page as premiere_page,
+                        o.actif as actif,
                         c.nom as categorie,
                         sc.nom as sous_categorie,
                         (SELECT i.fichier
@@ -190,20 +233,9 @@ class db_objects():
                 'premiere_page': line['premiere_page'],
                 'categorie': line['categorie'],
                 'sous_categorie': line['sous_categorie'],
+                'actif': line['actif'],
                 'fichier2D': config.img_2D_Path(line['fichier2D'])
             })
 
         return list
     
-    def delete_objet(self, id : int):
-        """
-        Suppression d'un objet
-        
-        :param id: id de l'objet à supprimer
-        :type id: int
-        """
-        conn = self.__get_db_connection() 
-        conn.execute(f'DELETE FROM objets WHERE id = {id}')
-        conn.execute(f'DELETE FROM images WHERE id_objets = {id}')
-        conn.commit()
-        conn.close()

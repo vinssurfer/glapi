@@ -27,7 +27,7 @@ def objet():
         return render_template( 'objet.html',
                                 objet = db.get_objet(id = id),
                                 images2D = db.get_images2D_objet(id = id),
-                                image3D = db.get_image3D_objet(id = id)
+                                images3D = db.get_images3D_objet(id = id)
                             )
     
     return redirect(url_for('index_blueprint.index'))
